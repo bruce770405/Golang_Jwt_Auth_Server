@@ -30,7 +30,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	filter := bson.D{{"userName", userLoginData.UserName}}
 
 	var result User
-	err = db.Connection().Collection("users").FindOne(context.TODO(), filter).Decode(&result)
+	err = db.GetInstance().Collection("users").FindOne(context.TODO(), filter).Decode(&result)
 	if err != nil {
 		w.WriteHeader(http.StatusForbidden)
 		fmt.Fprint(w, "request data has error.")
