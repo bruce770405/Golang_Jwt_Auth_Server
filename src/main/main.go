@@ -2,6 +2,7 @@ package main
 
 import (
 	"data"
+	"db"
 	"github.com/codegangsta/negroni"
 	"log"
 	"login"
@@ -15,7 +16,10 @@ type Predicate = func(int) bool
 //}
 
 func startServer() {
+	// connection mongoDB
+	db.Connection()
 
+	// register
 	http.HandleFunc("/login", login.Handler)
 
 	http.Handle("/resource", negroni.New(
