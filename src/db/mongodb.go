@@ -6,38 +6,57 @@ import (
 	"fmt"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"log"
 )
+
+var database *mongo.Database
 
 /**
 <p>
-  怎麼保有connection instance
   實作connection pool.
 */
+func Connection() {
+	log.Println("Connecting database ...")
+	// Set client options
+	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
 
-func Connection() (database *mongo.Database) {
-	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI("http://localhost:27017"))
+	client, err := mongo.Connect(context.Background(), clientOptions)
 	exception.Fatal(err)
 
 	err = client.Ping(context.Background(), nil)
 	exception.Fatal(err)
 
-	fmt.Println("Connected to MongoDB!")
+	log.Println("Connected to MongoDB!")
 
 	// handle for the trainers collection in the test database
 	// collection := client.Database("test").Collection("trainers")
 
 	database = client.Database("dev_db")
-	return
+	//return
+}
+
+/**
+
+ */
+func GetInstance() *mongo.Database {
+	fmt.Println("GetInstance ... ", database)
+	return database
 }
 
 func DisConnection() {
 
-	// Close the connection
-	//err = client.Disconnect(context.TODO())
+	if database == nil {
+		return
+	}
 
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//fmt.Println("Connection to MongoDB closed.")
+	// Close the connection
+	err := database.Client().Disconnect(context.TODO())
+
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	fmt.Println("Connection to MongoDB closed.")
 
 }
